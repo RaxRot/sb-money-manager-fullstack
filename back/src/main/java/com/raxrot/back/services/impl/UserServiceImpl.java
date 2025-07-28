@@ -8,6 +8,7 @@ import com.raxrot.back.repositories.UserRepository;
 import com.raxrot.back.services.EmailService;
 import com.raxrot.back.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -17,10 +18,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final EmailService emailService;
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, EmailService emailService) {
+    private final PasswordEncoder passwordEncoder;
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -31,6 +34,10 @@ public class UserServiceImpl implements UserService {
         User user = modelMapper.map(userRequestDTO, User.class);
         String token = UUID.randomUUID().toString();
         user.setActivationToken(token);
+
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
+
         userRepository.save(user);
 
         //send activation email
