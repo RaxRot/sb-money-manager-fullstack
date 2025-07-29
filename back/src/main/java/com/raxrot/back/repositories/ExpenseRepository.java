@@ -30,4 +30,6 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
             LocalDate startDate,
             LocalDate endDate
     );
+
+    List<Expense>getExpensesForUserOnDate(User user,LocalDate date);
 }
