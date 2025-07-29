@@ -4,6 +4,8 @@
 
 This is a **full-stack personal finance management application** built with **Spring Boot** (backend) and **React** (frontend), designed to help users track incomes, expenses, and manage financial categories efficiently. The app provides secure authentication, dynamic dashboards, CRUD operations, filtering, and email notifications — all following best practices in modern web development.
 
+**Note:** This project is actively maintained and continuously improved. I regularly update and refactor the codebase to enhance performance, usability, and maintainability, ensuring it stays modern and scalable.
+
 ---
 ## Screenshots
 
@@ -76,22 +78,6 @@ This is a **full-stack personal finance management application** built with **Sp
 | Spring Boot 3          | React Router Dom    |              | Tailwind CSS         |
 | Spring Data JPA        | Axios               |              | React Toastify       |
 | ModelMapper            | Context API         |              | JavaMail, Scheduled Tasks |
-
----
-
-## How to Run
-
-### Backend
-
-1. Setup MySQL database and update `application.properties`
-2. Build and run Spring Boot application (`mvn spring-boot:run` or from IDE)
-3. Ensure environment variables for mail and JWT are set
-
-### Frontend
-
-1. Run `npm install`
-2. Run `npm start`
-3. Open [http://localhost:5173](http://localhost:5173)
 
 ---
 
