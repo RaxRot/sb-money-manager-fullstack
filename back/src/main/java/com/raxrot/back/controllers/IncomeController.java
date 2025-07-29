@@ -1,0 +1,38 @@
+package com.raxrot.back.controllers;
+
+import com.raxrot.back.dtos.IncomeRequestDTO;
+import com.raxrot.back.dtos.IncomeResponseDTO;
+import com.raxrot.back.services.IncomeService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/incomes")
+public class IncomeController {
+
+    private final IncomeService incomeService;
+
+    @PostMapping
+    public ResponseEntity<IncomeResponseDTO> addIncome(@Valid @RequestBody IncomeRequestDTO dto) {
+        IncomeResponseDTO saved = incomeService.create(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<IncomeResponseDTO>> getIncomes() {
+        List<IncomeResponseDTO> incomes = incomeService.getCurrentMonthIncomesForCurrentUser();
+        return ResponseEntity.ok(incomes);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteIncome(@PathVariable Long id) {
+        incomeService.deleteIncome(id);
+        return ResponseEntity.noContent().build();
+    }
+}
