@@ -5,6 +5,19 @@
 This is a **full-stack personal finance management application** built with **Spring Boot** (backend) and **React** (frontend), designed to help users track incomes, expenses, and manage financial categories efficiently. The app provides secure authentication, dynamic dashboards, CRUD operations, filtering, and email notifications — all following best practices in modern web development.
 
 ---
+## Screenshots
+
+### Dashboard View
+![Dashboard Screenshot](docs/screen1.png)
+
+### Category Management
+![Category Screenshot](docs/screen2.png)
+
+### Filter
+![Filter Screenshot](docs/screen3.png)
+
+### Register
+![Register Screenshot](docs/screen3.png)
 
 ## Features
 
