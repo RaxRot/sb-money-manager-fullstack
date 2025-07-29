@@ -1,13 +1,36 @@
-import {createContext, useState} from "react";
+import { createContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axiosConfig from "../util/axiosConfig"; // твой axios с токеном
 
-const AppContext=createContext();
-export const AppContextProvider=({children})=>{
- const [user,setUser]=useState(null);
-    const contextValue={
-        user
-    }
+export const AppContext = createContext();
 
-    return <AppContext.Provider value={contextValue}>
-        {children}
-    </AppContext.Provider>
-}
+export const AppContextProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token && !user) {
+            // Получаем данные текущего пользователя с backend
+            axiosConfig.get("/profile")
+                .then(res => setUser(res.data))
+                .catch(() => {
+                    localStorage.removeItem("token");
+                    setUser(null);
+                    navigate("/login");
+                });
+        }
+    }, []);
+
+    const logout = () => {
+        localStorage.removeItem("token");
+        setUser(null);
+        navigate("/login");
+    };
+
+    return (
+        <AppContext.Provider value={{ user, setUser, logout }}>
+            {children}
+        </AppContext.Provider>
+    );
+};

@@ -1,76 +1,87 @@
-import {useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
-import {assets} from "../assets/assets.js";
-import Input from "../components/Input.jsx";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Input from "../components/Input";
+import axiosConfig from "../util/axiosConfig";
+import { API_ENDPOINTS } from "../util/apiEndpoints";
+import { toast } from "react-toastify";
 
 export default function SignUp() {
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState(null);
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
 
-    const navigate=useNavigate();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+        if (!fullName.trim() || !email.trim() || !password.trim()) {
+            setError("All fields are required");
+            return;
+        }
+        try {
+            const res = await axiosConfig.post(API_ENDPOINTS.REGISTER, {
+                fullName,
+                email,
+                password,
+            });
+            if (res.status === 201) {
+                toast.success("Registration successful! Check your email to activate your account.");
+                navigate("/login");
+            }
+        } catch (err) {
+            if (err.response?.data) {
+                if (typeof err.response.data === "object") {
+                    const messages = Object.values(err.response.data).join(", ");
+                    setError(messages);
+                } else {
+                    setError(err.response.data);
+                }
+            } else {
+                setError("Registration failed");
+            }
+        }
+    };
 
-    return <div className="h-screen w-full relative flex items-center justify-center overflow-hidden">
-        {/*BG IMAGE with blur*/}
-        <img src={assets.login_bg}alt="bg" className="absolute inset w-full h-full object-cover filter blur-sm"/>
-
-        <div className="relative z-10 w-full max-w-lg px-6">
-            <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg shadow-2xl p-8 max-h-[90vh] overflow-y-auto">
-                <h3 className="text-2xl font-semibold text-black text-center mb-2">
-                    Create an Account
-                </h3>
-                <p className="text-sm text-slate-700 text-center mb-8">
-                    Start tracking your spendings by joining our community.
-                </p>
-                <form className="space-y-4">
-                    <div className="flex justify-center mb-6">
-                        {/* Profile Image*/}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Input
-                        label={fullName}
-                        onChange={(event) => setFullName(event.target.value)}
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
+                <form onSubmit={handleSubmit}>
+                    <Input
                         label="Full Name"
-                        placeholder="Enter your full name"
-                        type="text"/>
-
-                        <Input
-                            label={email}
-                            onChange={(event) => setEmail(event.target.value)}
-                            label="Email"
-                            placeholder="Enter your email"
-                            type="text"/>
-
-                      <div className="col-span-2">
-                          <Input
-                              label={password}
-                              onChange={(event) => setPassword(event.target.value)}
-                              label="Password"
-                              placeholder="Enter your password"
-                              type="password"/>
-                      </div>
-
-                    </div>
-
-                    {error && <p className="text-red-800 text-sm text-center bg-red-50 p-2 rounded">{error}</p>}
-
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="Your full name"
+                    />
+                    <Input
+                        label="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@example.com"
+                    />
+                    <Input
+                        label="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Your password"
+                        type="password"
+                    />
+                    {error && <p className="text-red-600 mb-3">{error}</p>}
                     <button
                         type="submit"
-                        className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg shadow-md
-             transition duration-300 ease-in-out transform hover:scale-105 hover:bg-blue-700 hover:shadow-xl"
+                        className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
                     >
-                        SIGN UP
+                        Sign Up
                     </button>
-
-                    <p className="text-sm text-slate-800 text-center mt-6">
-                        Already have an account? <Link to="/login" className="text-blue-500 hover:underline">Login</Link>
-                    </p>
-
                 </form>
+                <p className="mt-4 text-center">
+                    Already have an account?{" "}
+                    <Link to="/login" className="text-blue-600 hover:underline">
+                        Log In
+                    </Link>
+                </p>
             </div>
         </div>
-
-    </div>
+    );
 }
