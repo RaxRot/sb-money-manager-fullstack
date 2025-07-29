@@ -1,5 +1,6 @@
 package com.raxrot.back.services.impl;
 
+import com.raxrot.back.configurations.AppConstants;
 import com.raxrot.back.dtos.ExpenseRequestDTO;
 import com.raxrot.back.dtos.ExpenseResponseDTO;
 import com.raxrot.back.dtos.UserResponseDTO;
@@ -43,7 +44,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     private User getCurrentUser() {
         UserResponseDTO dto = userService.getUserCurrentUser(null);
         return userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new ApiException("User not found"));
+                .orElseThrow(() -> new ApiException(AppConstants.USER_NOT_FOUND));
     }
 
     @Override
@@ -51,7 +52,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         User user = getCurrentUser();
 
         Category category = categoryRepository.findById(expenseRequestDTO.getCategoryId())
-                .orElseThrow(() -> new ApiException("Category not found"));
+                .orElseThrow(() -> new ApiException(AppConstants.CATEGORY_NOT_FOUND));
 
         Expense expense = modelMapper.map(expenseRequestDTO, Expense.class);
         expense.setUser(user);
@@ -110,10 +111,10 @@ public class ExpenseServiceImpl implements ExpenseService {
     public void deleteExpense(Long expenseId) {
         User user = getCurrentUser();
         Expense expense = expenseRepository.findById(expenseId)
-                .orElseThrow(() -> new ApiException("Expense not found"));
+                .orElseThrow(() -> new ApiException(AppConstants.EXPENSE_NOT_FOUND));
 
         if (!expense.getUser().getId().equals(user.getId())) {
-            throw new ApiException("You do not have permission to delete this expense");
+            throw new ApiException(AppConstants.PERMISSION_DENIED);
         }
 
         expenseRepository.delete(expense);

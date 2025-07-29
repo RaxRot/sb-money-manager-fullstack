@@ -1,5 +1,6 @@
 package com.raxrot.back.services.impl;
 
+import com.raxrot.back.configurations.AppConstants;
 import com.raxrot.back.dtos.CategoryRequestDTO;
 import com.raxrot.back.dtos.CategoryResponseDTO;
 import com.raxrot.back.dtos.UserResponseDTO;
@@ -38,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
         User user = getUser(currentUser);
 
         if (categoryRepository.existsByNameAndUser(categoryDTO.getName(), user)) {
-            throw new ApiException("Category already exists");
+            throw new ApiException(AppConstants.CATEGORY_ALREADY_EXISTS);
         }
 
         Category category = modelMapper.map(categoryDTO, Category.class);
@@ -76,7 +77,7 @@ public class CategoryServiceImpl implements CategoryService {
         UserResponseDTO currentUser = getUserDTO();
         User user = getUser(currentUser);
         Category categoryToUpdate=categoryRepository.findByIdAndUser(categoryId,user)
-                .orElseThrow(() -> new ApiException("Category not found"));
+                .orElseThrow(() -> new ApiException(AppConstants.CATEGORY_NOT_FOUND));
         categoryToUpdate.setName(category.getName());
         categoryToUpdate.setType(category.getType());
         Category savedCategory = categoryRepository.save(categoryToUpdate);
@@ -88,13 +89,13 @@ public class CategoryServiceImpl implements CategoryService {
         UserResponseDTO currentUser = getUserDTO();
         User user = getUser(currentUser);
         Category category = categoryRepository.findByIdAndUser(categoryId, user)
-                .orElseThrow(() -> new ApiException("Category not found"));
+                .orElseThrow(() -> new ApiException(AppConstants.CATEGORY_NOT_FOUND));
         categoryRepository.delete(category);
     }
 
     private User getUser(UserResponseDTO currentUser) {
         return userRepository.findByEmail(currentUser.getEmail())
-                .orElseThrow(() -> new ApiException("User not found"));
+                .orElseThrow(() -> new ApiException(AppConstants.USER_NOT_FOUND));
     }
 
     private UserResponseDTO getUserDTO() {

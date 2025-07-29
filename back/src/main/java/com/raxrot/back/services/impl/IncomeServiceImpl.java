@@ -1,5 +1,6 @@
 package com.raxrot.back.services.impl;
 
+import com.raxrot.back.configurations.AppConstants;
 import com.raxrot.back.dtos.IncomeRequestDTO;
 import com.raxrot.back.dtos.IncomeResponseDTO;
 import com.raxrot.back.dtos.UserResponseDTO;
@@ -44,7 +45,7 @@ public class IncomeServiceImpl implements IncomeService {
     private User getCurrentUser() {
         UserResponseDTO dto = userService.getUserCurrentUser(null);
         return userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new ApiException("User not found"));
+                .orElseThrow(() -> new ApiException(AppConstants.USER_NOT_FOUND));
     }
 
     @Override
@@ -52,7 +53,7 @@ public class IncomeServiceImpl implements IncomeService {
         User user = getCurrentUser();
 
         Category category = categoryRepository.findById(incomeRequestDTO.getCategoryId())
-                .orElseThrow(() -> new ApiException("Category not found"));
+                .orElseThrow(() -> new ApiException(AppConstants.CATEGORY_NOT_FOUND));
 
         Income income = modelMapper.map(incomeRequestDTO, Income.class);
         income.setUser(user);
@@ -111,10 +112,10 @@ public class IncomeServiceImpl implements IncomeService {
     public void deleteIncome(Long incomeId) {
         User user = getCurrentUser();
         Income income = incomeRepository.findById(incomeId)
-                .orElseThrow(() -> new ApiException("Income not found"));
+                .orElseThrow(() -> new ApiException(AppConstants.INCOME_NOT_FOUND));
 
         if (!income.getUser().getId().equals(user.getId())) {
-            throw new ApiException("You do not have permission to delete this income");
+            throw new ApiException(AppConstants.PERMISSION_DENIED);
         }
 
         incomeRepository.delete(income);

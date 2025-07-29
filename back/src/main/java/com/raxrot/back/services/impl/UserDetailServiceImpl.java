@@ -1,5 +1,6 @@
 package com.raxrot.back.services.impl;
 
+import com.raxrot.back.configurations.AppConstants;
 import com.raxrot.back.entities.User;
 import com.raxrot.back.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException(AppConstants.USER_NOT_FOUND +" "+ email));
 
         return UserDetailsImpl.builder()
                 .id(user.getId())

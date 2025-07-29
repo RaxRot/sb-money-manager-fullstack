@@ -1,5 +1,6 @@
 package com.raxrot.back.services.impl;
 
+import com.raxrot.back.configurations.AppConstants;
 import com.raxrot.back.dtos.UserRequestDTO;
 import com.raxrot.back.dtos.UserResponseDTO;
 import com.raxrot.back.entities.User;
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
         if (userRepository.findByEmail(userRequestDTO.getEmail()).isPresent()) {
-            throw new ApiException("Email address already in use");
+            throw new ApiException(AppConstants.EMAIL_IN_USE);
         }
         User user = modelMapper.map(userRequestDTO, User.class);
         String token = UUID.randomUUID().toString();
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isUserActivated(String email) {
        User user = userRepository.findByEmail(email)
-               .orElseThrow(()->new ApiException("User not found with"));
+               .orElseThrow(()->new ApiException(AppConstants.USER_NOT_FOUND));
        return user.getIsActive();
     }
 
@@ -74,10 +75,10 @@ public class UserServiceImpl implements UserService {
             Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
             String currentEmail = authentication.getName();
             user = userRepository.findByEmail(currentEmail)
-                    .orElseThrow(()->new ApiException("User not found with"));
+                    .orElseThrow(()->new ApiException(AppConstants.USER_NOT_FOUND));
         }else{
             user = userRepository.findByEmail(email)
-                    .orElseThrow(()->new ApiException("User not found with"));
+                    .orElseThrow(()->new ApiException(AppConstants.USER_NOT_FOUND));
         }
         return modelMapper.map(user, UserResponseDTO.class);
     }
